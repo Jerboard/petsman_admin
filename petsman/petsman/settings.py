@@ -106,6 +106,8 @@ MEDIA_URL = '/media/'
 
 # Абсолютный путь к папке /media на сервере
 MEDIA_ROOT = os.path.join(BASE_DIR, config('MEDIA_PATH'))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 TEMP_FOLDER = os.path.join(BASE_DIR, '/temp')
 
 if not os.path.exists(TEMP_FOLDER):
