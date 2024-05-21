@@ -4,7 +4,7 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('DJANGO_KEY')
 UB_API_ID = int(config('UB_API_ID'))
 UB_API_HAS = config('UB_API_ID')
 TOKEN_PETSMAN = config('BOT_TOKEN')
