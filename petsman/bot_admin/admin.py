@@ -3,7 +3,7 @@ from .models import Profile, Place, Pets, Faq, MailingChat
 from bot_admin import maps
 from django.utils.html import format_html, mark_safe
 
-from bot_admin.bot_user import send_telegram_message_sync
+from bot_admin.actions import mark_pet_remailing
 
 
 @admin.register(Profile)
@@ -53,26 +53,25 @@ class ViewAdminPlace (admin.ModelAdmin):
 #  Пользователь/Город/Тип объявления/Описание/Создано/Статус объекта(Опубликовано)/
 @admin.register (Pets)
 class ViewAdminSearchPets (admin.ModelAdmin):
-    # list_display = ['user_full_name', 'city_str', 'entry_type', 'description_short', 'created_at', 'status',
-    #                 'cover_image_preview']
-    list_display = ['user_full_name', 'city_str', 'entry_type', 'description_short', 'created_at', 'status']
+    list_display = ['user_full_name', 'city_str', 'entry_type', 'description_short', 'created_at', 'status',
+                    'cover_image_preview']
     search_fields = ['user_id']
     list_filter = ['pet_type', 'city_id', 'entry_type', 'status']
-    # readonly_fields = ['cover_image_preview_in']
+    readonly_fields = ['cover_image_preview_in']
     actions = ['repeat_mailing']  # Добавляем кастомное действие
     exclude = ['photo_id', 'location']
 
-    # def cover_image_preview(self, obj):
-    #     if obj.photo_path:
-    #         return mark_safe(f'<img src="{obj.photo_path.url}" style="max-width:100px; max-height:100px;">')
-    #     else:
-    #         return "No image"
-    #
-    # def cover_image_preview_in(self, obj):
-    #     if obj.photo_path:
-    #         return mark_safe(f'<img src="{obj.photo_path.url}" style="max-width:300px; max-height:300px;">')
-    #     else:
-    #         return "No image"
+    def cover_image_preview(self, obj):
+        if obj.photo_path:
+            return mark_safe(f'<img src="{obj.photo_path.url}" style="max-width:100px; max-height:100px;">')
+        else:
+            return "No image"
+
+    def cover_image_preview_in(self, obj):
+        if obj.photo_path:
+            return mark_safe(f'<img src="{obj.photo_path.url}" style="max-width:300px; max-height:300px;">')
+        else:
+            return "No image"
 
     def user_full_name(self, obj):
         user = Profile.objects.filter(user_id=obj.user_id).first()
@@ -94,23 +93,16 @@ class ViewAdminSearchPets (admin.ModelAdmin):
             return '-'
 
     def repeat_mailing(self, request, queryset):
-        # print('\n\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        # print(type(queryset), len(queryset))
-        #
-        # for i in queryset:
-        #     print(i)
-        send_telegram_message_sync(queryset)
-        # for chat in queryset:
-        #     re_mailing_ad(chat)  # Вызываем функцию повторной отправки
-        self.message_user(request, "Повторная отправка выполнена успешно")
+        mark_pet_remailing(queryset)
+        self.message_user(request, "Объявления помечены для повторной публикации")
 
-    repeat_mailing.short_description = "Повторная отправка"
+    repeat_mailing.short_description = "Повторная публикация"
     user_full_name.short_description = 'Пользователь'
     city_str.short_description = 'Город'
     entry_type_str.short_description = 'Тип объявления'
     description_short.short_description = 'Описание'
-    # cover_image_preview.short_description = 'Фото'
-    # cover_image_preview_in.short_description = 'Фото'
+    cover_image_preview.short_description = 'Фото'
+    cover_image_preview_in.short_description = 'Фото'
 
 
 @admin.register (Faq)

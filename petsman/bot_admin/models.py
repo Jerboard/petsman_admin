@@ -67,6 +67,7 @@ class Pets(models.Model):
     view_count = models.IntegerField('Просмотры', null=True, default=0),
     photo_path = models.ImageField ('Изменить фото', upload_to="photos_pets/", null=True, blank=True)
     location = models.CharField ('Локация', max_length=255, null=True, blank=True)
+    remailing = models.BooleanField ('Повторная отправка', default=False)
 
     def __str__(self):
         return f"<Pet({self.id}, {self.pet_type})>"
