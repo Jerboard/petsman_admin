@@ -85,9 +85,14 @@ class Profile(models.Model):
     full_name = models.CharField("Имя", max_length=255, null=True, blank=True)
     username = models.CharField("Юзернейм", max_length=255, null=True, blank=True)
     language = models.CharField("Язык", max_length=255, null=True, blank=True, default='ru')
+    city_id = models.CharField("Город", max_length=255, null=True, blank=True, choices=maps.cities)
     created_at = models.DateTimeField("Первый визит", null=True, blank=True, default=datetime.now())
     last_activity = models.DateTimeField("Последняя активность", null=True, blank=True, default=datetime.now())
     status = models.CharField("Статус", max_length=255, choices=maps.user_status)
+    notice_found = models.BooleanField('Уведомления о найденных', default=True)
+    notice_lost = models.BooleanField('Уведомления о потерянных', default=True)
+    notice_shelter = models.BooleanField('Уведомления о приютах', default=True)
+    notice_person = models.BooleanField('Уведомления о "отдам"', default=True)
 
     def __str__(self):
         return f"<Profile({self.user_id}, {self.full_name})>"

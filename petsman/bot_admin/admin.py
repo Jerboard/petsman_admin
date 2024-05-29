@@ -8,10 +8,15 @@ from bot_admin.actions import mark_pet_remailing
 
 @admin.register(Profile)
 class ViewAdminProfile(admin.ModelAdmin):
-    list_display = ['user_id', 'full_name', 'username', 'language', 'created_at', 'last_activity', 'status']
+    list_display = ['user_id', 'full_name', 'username', 'city_str', 'status', 'last_activity']
     search_fields = ['user_id', 'user_id', 'username']
-    list_filter = ['status']
+    list_filter = ['status', 'city_id']
     ordering = ['-last_activity']
+
+    def city_str(self, obj):
+        return maps.cities_dict.get (obj.city_id, 'н/д')
+
+    city_str.short_description = 'Город'
 
 
 # Владелец/Город/Имя объекта/Адрес/Создано/Статус объекта(Опубликовано)
